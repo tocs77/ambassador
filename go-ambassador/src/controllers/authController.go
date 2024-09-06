@@ -85,3 +85,55 @@ func Logout(c *fiber.Ctx) error {
 	c.Cookie(&cookie)
 	return c.JSON(fiber.Map{"message": "success"})
 }
+
+func UpdateUser(c *fiber.Ctx) error {
+	var data map[string]string
+	if err := c.BodyParser(&data); err != nil {
+		return err
+	}
+	if data["password"] != data["password_confirm"] {
+		c.Status(400)
+		return c.JSON(fiber.Map{"message": "passwords do not match"})
+	}
+
+	newUser := models.User{
+		FirstName: data["first_name"],
+		LastName:  data["last_name"],
+		Email:     data["email"],
+	}
+	id := c.Locals("id").(uint)
+	var user models.User
+	database.DB.Where("id = ?", id).First(&user)
+
+	if newUser.Email != "" {
+		user.Email = newUser.Email
+	}
+	if newUser.FirstName != "" {
+		user.FirstName = newUser.FirstName
+	}
+	if newUser.LastName != "" {
+		user.LastName = newUser.LastName
+	}
+
+	database.DB.Save(&user)
+	return c.JSON(user)
+}
+
+func UpdatePassword(c *fiber.Ctx) error {
+	var data map[string]string
+	if err := c.BodyParser(&data); err != nil {
+		return err
+	}
+	if data["password"] != data["password_confirm"] {
+		c.Status(400)
+		return c.JSON(fiber.Map{"message": "passwords do not match"})
+	}
+	id := c.Locals("id").(uint)
+	var user models.User
+
+	database.DB.Where("id = ?", id).First(&user)
+	user.SetPassword(data["password"])
+	database.DB.Save(&user)
+
+	return c.JSON(user)
+}
