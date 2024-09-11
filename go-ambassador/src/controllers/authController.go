@@ -91,11 +91,6 @@ func UpdateUser(c *fiber.Ctx) error {
 	if err := c.BodyParser(&data); err != nil {
 		return err
 	}
-	if data["password"] != data["password_confirm"] {
-		c.Status(400)
-		return c.JSON(fiber.Map{"message": "passwords do not match"})
-	}
-
 	newUser := models.User{
 		FirstName: data["first_name"],
 		LastName:  data["last_name"],
