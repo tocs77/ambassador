@@ -4,6 +4,7 @@ import (
 	"ambassador/src/database"
 	"ambassador/src/models"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -24,7 +25,7 @@ func Register(c *fiber.Ctx) error {
 		FirstName:    data["first_name"],
 		LastName:     data["last_name"],
 		Email:        data["email"],
-		IsAmbassador: false,
+		IsAmbassador: strings.Contains(c.Path(), "/api/ambassador"),
 	}
 	user.SetPassword(data["password"])
 
@@ -73,6 +74,12 @@ func User(c *fiber.Ctx) error {
 	var user models.User
 	database.DB.Where("id = ?", id).First(&user)
 	return c.JSON(user)
+}
+
+func Users(c *fiber.Ctx) error {
+	var users []models.User
+	database.DB.Find(&users)
+	return c.JSON(users)
 }
 
 func Logout(c *fiber.Ctx) error {
