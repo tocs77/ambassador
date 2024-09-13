@@ -22,5 +22,5 @@ func AutoMigrate() {
 	if DB == nil {
 		panic("DB is not initialized")
 	}
-	DB.AutoMigrate(models.User{}, models.Product{})
+	DB.AutoMigrate(models.User{}, models.Product{}, models.Link{}, models.Order{}, models.OrderItem{})
 }

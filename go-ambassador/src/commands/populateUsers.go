@@ -7,7 +7,7 @@ import (
 	"github.com/go-faker/faker/v4"
 )
 
-func main() {
+func main1() {
 	for i := 0; i < 30; i++ {
 		ambassador := models.User{
 			FirstName:    faker.FirstName(),
