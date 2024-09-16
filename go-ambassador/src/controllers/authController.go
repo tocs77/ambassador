@@ -2,13 +2,12 @@ package controllers
 
 import (
 	"ambassador/src/database"
+	"ambassador/src/middlewares"
 	"ambassador/src/models"
-	"strconv"
 	"strings"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/golang-jwt/jwt/v5"
 )
 
 func Register(c *fiber.Ctx) error {
@@ -50,11 +49,20 @@ func Login(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{"message": "Invalid credentials"})
 	}
 
-	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
-		Subject:   strconv.Itoa(int(user.Id)),
-		ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),
-	})
-	token, err := claims.SignedString([]byte("secret"))
+	var scope string
+	isAmbassador := strings.Contains(c.Path(), "/api/ambassador")
+	if isAmbassador {
+		scope = "ambassador"
+	} else {
+		scope = "admin"
+	}
+
+	if !isAmbassador && user.IsAmbassador {
+		c.Status(400)
+		return c.JSON(fiber.Map{"message": "unauthorized"})
+	}
+
+	token, err := middlewares.GenerateJwt(user.Id, scope)
 	if err != nil {
 		c.Status(400)
 		return c.JSON(fiber.Map{"message": "error creating token"})
