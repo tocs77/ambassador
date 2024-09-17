@@ -40,3 +40,18 @@ func (o *Order) GetTotal() float32 {
 	}
 	return total
 }
+
+func (o *Order) GetAmbassadorRevenue() float32 {
+	var total float32
+	for _, orderItem := range o.OrderItem {
+		total += orderItem.AmbassadorRevenue
+	}
+	return total
+}
+func (o *Order) GetAdminRevenue() float32 {
+	var total float32
+	for _, orderItem := range o.OrderItem {
+		total += orderItem.AdminRevenue
+	}
+	return total
+}
