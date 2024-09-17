@@ -107,12 +107,29 @@ func ProductsBackend(c *fiber.Ctx) error {
 			sortLower = "asc"
 		}
 		sort.Slice(products, func(i, j int) bool {
-			if sortLower == "asc" {
+			switch sortLower {
+			case "asc":
 				return products[i].Price < products[j].Price
+			case "desc":
+				return products[i].Price > products[j].Price
+			default:
+				return false
 			}
-			return products[i].Price > products[j].Price
 		})
 	}
 
-	return c.JSON(products)
+	var total = len(products)
+
+	perPage := 9
+	page, _ := strconv.Atoi(c.Query("page", "1"))
+	var data []models.Product = products
+	if total < page*perPage && total >= (page-1)*perPage {
+		data = products[(page-1)*perPage : total]
+	} else if total >= page*perPage {
+		data = products[(page-1)*perPage : page*perPage]
+	} else {
+		data = []models.Product{}
+	}
+
+	return c.JSON(fiber.Map{"data": data, "total": total, "page": page, "last_page": total/perPage + 1})
 }
