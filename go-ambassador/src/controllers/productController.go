@@ -32,6 +32,7 @@ func CreateProduct(c *fiber.Ctx) error {
 		return err
 	}
 	database.DB.Create(&product)
+	go database.ClearCache("products_frontend", "products_backend")
 	return c.JSON(product)
 }
 
@@ -44,6 +45,8 @@ func UpdateProduct(c *fiber.Ctx) error {
 	id, _ := strconv.Atoi(c.Params("id"))
 	product.Id = uint(id)
 	database.DB.Model(&product).Where("id = ?", id).Updates(&product)
+	go database.ClearCache("products_frontend", "products_backend")
+
 	return c.JSON(product)
 }
 
@@ -52,6 +55,7 @@ func DeleteProduct(c *fiber.Ctx) error {
 	product := models.Product{}
 	product.Id = uint(id)
 	database.DB.Delete(&product)
+	go database.ClearCache("products_frontend", "products_backend")
 	return c.JSON(product)
 }
 
