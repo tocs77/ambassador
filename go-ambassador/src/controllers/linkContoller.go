@@ -32,6 +32,28 @@ func GetAmbassadorLinks(c *fiber.Ctx) error {
 	database.DB.Where("user_id = ?", id).Find(&links)
 	return c.JSON(links)
 }
+func Stats(c *fiber.Ctx) error {
+	id := c.Locals("id").(uint)
+	var links []models.Link
+	database.DB.Where("user_id = ?", id).Find(&links)
+	var result []interface{}
+	var orders []models.Order
+	for _, link := range links {
+		database.DB.Preload("OrderItems").Find(&orders, &models.Order{Code: link.Code, Complete: true})
+
+		var revenue float32 = 0
+		for _, order := range orders {
+			revenue += order.GetTotal()
+		}
+
+		result = append(result, fiber.Map{
+			"code":    link.Code,
+			"count":   len(orders),
+			"revenue": revenue,
+		})
+	}
+	return c.JSON(result)
+}
 
 func CreateLink(c *fiber.Ctx) error {
 	var request CreateLinkRequest
@@ -50,5 +72,12 @@ func CreateLink(c *fiber.Ctx) error {
 	}
 
 	database.DB.Create(&link)
+	return c.JSON(link)
+}
+
+func GetLink(c *fiber.Ctx) error {
+	code := c.Params("code")
+	var link models.Link
+	database.DB.Where("code = ?", code).Preload("Products").Preload("User").First(&link)
 	return c.JSON(link)
 }

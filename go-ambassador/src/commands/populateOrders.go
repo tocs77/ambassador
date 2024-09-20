@@ -8,7 +8,7 @@ import (
 	"github.com/go-faker/faker/v4"
 )
 
-func main() {
+func main4() {
 	database.Connect()
 
 	// delete all order items

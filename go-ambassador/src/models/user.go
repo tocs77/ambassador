@@ -54,3 +54,7 @@ func (admin *Admin) CalculateRevenue() {
 
 	admin.Revenue = &revenue
 }
+
+func Name(user *User) string {
+	return user.FirstName + " " + user.LastName
+}

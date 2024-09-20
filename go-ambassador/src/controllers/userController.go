@@ -3,12 +3,30 @@ package controllers
 import (
 	"ambassador/src/database"
 	"ambassador/src/models"
+	"context"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/redis/go-redis/v9"
 )
 
 func GetAmbassador(c *fiber.Ctx) error {
 	var users []models.User
 	database.DB.Where("is_ambassador = true").Find(&users)
 	return c.JSON(users)
+}
+
+func Ranking(c *fiber.Ctx) error {
+
+	rankings, err := database.Cache.ZRangeByScoreWithScores(context.Background(), "rankings", &redis.ZRangeBy{Min: "-inf", Max: "+inf"}).Result()
+
+	if err != nil {
+		c.SendStatus(fiber.StatusInternalServerError)
+	}
+	result := make(map[string]float64)
+
+	for _, ranking := range rankings {
+		result[ranking.Member.(string)] = ranking.Score
+	}
+
+	return c.JSON(result)
 }
