@@ -3,6 +3,9 @@ package controllers
 import (
 	"ambassador/src/database"
 	"ambassador/src/models"
+	"context"
+	"fmt"
+	"net/smtp"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/stripe/stripe-go/v79"
@@ -142,4 +145,44 @@ func CreateOrder(c *fiber.Ctx) error {
 
 	tx.Commit()
 	return c.JSON(source)
+}
+
+func CompleteOrder(c *fiber.Ctx) error {
+	var data map[string]string
+	if err := c.BodyParser(&data); err != nil {
+		return err
+	}
+	order := models.Order{}
+	database.DB.Preload("OrderItems").First(&order, models.Order{TransactionId: data["source"]})
+	if order.Id == 0 {
+		c.Status(fiber.StatusNotFound)
+		return c.JSON(fiber.Map{
+			"message": "order not found",
+		})
+	}
+	order.Complete = true
+	database.DB.Save(&order)
+
+	go func(order models.Order) {
+		var ambassadorRevenue float32
+		var adminRevenue float32
+		for _, orderItem := range order.OrderItem {
+			ambassadorRevenue += orderItem.AmbassadorRevenue
+			adminRevenue += orderItem.AdminRevenue
+		}
+		user := models.User{}
+		user.Id = order.UserId
+		database.DB.First(&user)
+		database.Cache.ZIncrBy(context.Background(), "rankings", float64(ambassadorRevenue), models.Name(&user))
+		ambassadorMessage := []byte(fmt.Sprintf("You earned $%f revenue from the link: %s", ambassadorRevenue, order.Code))
+		smtp.SendMail("mailhog:1025", nil, "no-reply@example.com", []string{order.AmbassadorEmail}, ambassadorMessage)
+
+		adminMessage := []byte(fmt.Sprintf("Order #%d has been completed. Total revenue: $%f", order.Id, adminRevenue))
+		smtp.SendMail("mailhog:1025", nil, "no-reply@example.com", []string{"admin@example.com"}, adminMessage)
+
+	}(order)
+
+	return c.JSON(fiber.Map{
+		"message": "order completed",
+	})
 }
