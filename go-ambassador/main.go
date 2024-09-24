@@ -4,9 +4,11 @@ import (
 	"ambassador/src/database"
 	"ambassador/src/migration"
 	"ambassador/src/routes"
+	"os"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/stripe/stripe-go/v79"
 )
 
 func main() {
@@ -15,6 +17,7 @@ func main() {
 	migration.AutoMigrate()
 	database.SetupRedis()
 	database.SetupCacheChannel()
+	stripe.Key = os.Getenv("stripeKey")
 
 	app := fiber.New()
 	// app.Use(cors.New(cors.Config{

@@ -5,6 +5,8 @@ import (
 	"ambassador/src/models"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/stripe/stripe-go/v79"
+	"github.com/stripe/stripe-go/v79/checkout/session"
 )
 
 func Orders(c *fiber.Ctx) error {
@@ -30,6 +32,7 @@ type CreateOrderRequest struct {
 }
 
 func CreateOrder(c *fiber.Ctx) error {
+
 	var request CreateOrderRequest
 	if err := c.BodyParser(&request); err != nil {
 		return err
@@ -40,7 +43,7 @@ func CreateOrder(c *fiber.Ctx) error {
 	if link.Id == 0 {
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{
-			"message": "Invalid code",
+			"message": "Invalid link",
 		})
 	}
 	order := models.Order{
@@ -60,9 +63,11 @@ func CreateOrder(c *fiber.Ctx) error {
 		tx.Rollback()
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(fiber.Map{
-			"message": "Invalid code",
+			"message": err.Error(),
 		})
 	}
+
+	var lineItems []*stripe.CheckoutSessionLineItemParams
 	for _, requestProduct := range request.Products {
 		product := models.Product{}
 		product.Id = uint(requestProduct["product_id"])
@@ -78,16 +83,63 @@ func CreateOrder(c *fiber.Ctx) error {
 			AdminRevenue:      total * 0.9,
 		}
 
-		if err := tx.Create(&item); err != nil {
+		if err := tx.Create(&item).Error; err != nil {
 			tx.Rollback()
 			c.Status(fiber.StatusBadRequest)
 			return c.JSON(fiber.Map{
-				"message": "Invalid code",
+				"message": err,
 			})
 		}
 
+		pr := stripe.CheckoutSessionLineItemPriceDataProductDataParams{
+			Name:        stripe.String(product.Title),
+			Description: stripe.String(product.Description),
+			Images:      []*string{stripe.String(product.Image)},
+		}
+
+		prdata := stripe.CheckoutSessionLineItemPriceDataParams{
+			UnitAmount: stripe.Int64(int64(product.Price * 100)),
+			Currency:   stripe.String(string(stripe.CurrencyUSD)),
+		}
+		prdata.ProductData = &pr
+
+		lineItems = append(lineItems, &stripe.CheckoutSessionLineItemParams{
+			PriceData: &prdata,
+			Quantity:  stripe.Int64(int64(requestProduct["quantity"])),
+		})
+
+	}
+
+	params := stripe.CheckoutSessionParams{
+		SuccessURL: stripe.String("http://localhost:5000/success?source={CHECKOUT_SESSION_ID}"),
+		CancelURL:  stripe.String("http://localhost:5000/error"),
+		PaymentMethodTypes: stripe.StringSlice([]string{
+			"card",
+		}),
+		LineItems: lineItems,
+		Mode:      stripe.String("payment"),
+	}
+
+	source, err := session.New(&params)
+
+	if err != nil {
+		tx.Rollback()
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"message": err.Error(),
+		})
+	}
+
+	order.TransactionId = source.ID
+
+	if err := tx.Save(&order).Error; err != nil {
+		tx.Rollback()
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(fiber.Map{
+			"message": err.Error(),
+		})
 	}
 
 	tx.Commit()
-	return c.JSON(order)
+	return c.JSON(source)
 }
