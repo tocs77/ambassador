@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "go-ambassador",
+			"path": "go-ambassador"
+		},
+		{
+			"name": "react-admin",
+			"path": "react-admin"
+		}
+	],
+	"settings": {}
+}
