@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { userController } from '@/shared/api';
+import { adminController } from '@/shared/api';
 import { User } from '@/shared/types';
 import { Menu } from '@/widgets/Menu';
 import { Nav } from '@/widgets/Nav';
@@ -8,7 +8,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
   const [user, setUser] = useState<User>();
   const getUser = async () => {
-    const response = await userController.user();
+    const response = await adminController.user();
     if (response.type === 'error') {
       navigate('/login');
       return;

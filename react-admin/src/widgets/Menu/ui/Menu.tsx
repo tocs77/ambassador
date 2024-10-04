@@ -23,6 +23,14 @@ export const Menu = () => {
                 {'Users'}
               </NavLink>
             </li>
+            <li className='nav-item'>
+              <NavLink className='nav-link' aria-current='page' to='/products'>
+                <svg className='bi'>
+                  <use xlinkHref='#house-fill' />
+                </svg>
+                {'Products'}
+              </NavLink>
+            </li>
           </ul>
         </div>
       </div>

@@ -1,2 +1,2 @@
 export { authController } from './controllers/authController';
-export { userController } from './controllers/userController';
+export { adminController } from './controllers/adminController';
