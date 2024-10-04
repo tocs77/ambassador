@@ -34,6 +34,29 @@ class AuthController {
       return { message: parseErrorMessage(error), type: 'error' };
     }
   }
+
+  async login(email: string, password: string): Response<LoginResponse> {
+    let response;
+    try {
+      response = await instance.post('/admin/login', {
+        email,
+        password,
+      });
+      return { payload: response.data, type: 'payload' };
+    } catch (error) {
+      return { message: parseErrorMessage(error), type: 'error' };
+    }
+  }
+
+  async logout(): Response<void> {
+    let response;
+    try {
+      response = await instance.post('/admin/logout');
+      return { payload: response.data, type: 'payload' };
+    } catch (error) {
+      return { message: parseErrorMessage(error), type: 'error' };
+    }
+  }
 }
 
 export const authController = new AuthController();

@@ -1,5 +1,10 @@
 @import "bootstrap/scss/bootstrap";
 
+@font-face {
+  font-family: Roboto;
+  src: local('RobotoCondensed-Regular.ttf'), url('../../shared//assets//fonts//Roboto-Regular.ttf') format('truetype');
+}
+
 .bi {
   display: inline-block;
   width: 1rem;
@@ -69,4 +74,13 @@
   margin-bottom: 10px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
+}
+
+body {
+  font-family: 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans',
+    'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin-left: 0rem;
+  margin-right: 0rem;
 }

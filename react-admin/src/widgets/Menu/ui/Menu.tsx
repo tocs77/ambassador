@@ -1,3 +1,5 @@
+import { NavLink } from 'react-router-dom';
+
 export const Menu = () => {
   return (
     <div className='sidebar border border-right col-md-3 col-lg-2 p-0 bg-body-tertiary'>
@@ -14,12 +16,12 @@ export const Menu = () => {
         <div className='offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto'>
           <ul className='nav flex-column'>
             <li className='nav-item'>
-              <a className='nav-link d-flex align-items-center gap-2 active' aria-current='page' href='#'>
+              <NavLink className='nav-link' aria-current='page' to='/users'>
                 <svg className='bi'>
                   <use xlinkHref='#house-fill' />
                 </svg>
-                Dashboard
-              </a>
+                {'Users'}
+              </NavLink>
             </li>
           </ul>
         </div>
