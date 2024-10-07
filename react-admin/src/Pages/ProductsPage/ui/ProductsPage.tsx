@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Product } from '@/entities/Product';
 import { Layout } from '@/shared/ui/Layout';
 import { adminController } from '@/shared/api';
@@ -6,6 +7,7 @@ import Button from '@mui/material/Button';
 
 export const ProductsPage = () => {
   const [products, setProducts] = useState<Product[]>([]);
+  const navigate = useNavigate();
 
   const fetchProducts = async () => {
     const res = await adminController.getProducts();
@@ -26,9 +28,17 @@ export const ProductsPage = () => {
     }
   };
 
-  console.log(products);
+  const updateHandler = async (id: number) => {
+    navigate(`/products/edit/${id}`);
+  };
+
   return (
     <Layout>
+      <Link to='/products/create'>
+        <Button variant='contained' color='secondary'>
+          {'Create'}
+        </Button>
+      </Link>
       <table className='table table-striped table-sm'>
         <thead>
           <tr>
@@ -49,6 +59,9 @@ export const ProductsPage = () => {
               <td>{product.description}</td>
               <td>{product.price}</td>
               <td>
+                <Button variant='contained' color='primary' onClick={() => updateHandler(product.id)}>
+                  {'Edit'}
+                </Button>
                 <Button variant='contained' color='secondary' onClick={() => deleteHandler(product.id)}>
                   {'Delete'}
                 </Button>

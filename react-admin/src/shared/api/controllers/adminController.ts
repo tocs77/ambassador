@@ -50,10 +50,43 @@ class AdminController {
     }
   }
 
+  async getProduct(id: number): Response<Product> {
+    let response;
+    try {
+      response = await instance.get(`admin/products/${id}`);
+      return { payload: response.data, type: 'payload' };
+    } catch (error) {
+      console.log('Got api load error: ', error);
+      return { message: parseErrorMessage(error), type: 'error' };
+    }
+  }
+
   async deleteProduct(id: number): Response<void> {
     let response;
     try {
       response = await instance.delete(`admin/products/${id}`);
+      return { payload: response.data, type: 'payload' };
+    } catch (error) {
+      console.log('Got api load error: ', error);
+      return { message: parseErrorMessage(error), type: 'error' };
+    }
+  }
+
+  async createProduct(product: Omit<Product, 'id'>): Response<Product> {
+    let response;
+    try {
+      response = await instance.post(`admin/products`, product);
+      return { payload: response.data, type: 'payload' };
+    } catch (error) {
+      console.log('Got api load error: ', error);
+      return { message: parseErrorMessage(error), type: 'error' };
+    }
+  }
+
+  async updateProduct(product: Product): Response<Product> {
+    let response;
+    try {
+      response = await instance.patch(`admin/products/${product.id}`, product);
       return { payload: response.data, type: 'payload' };
     } catch (error) {
       console.log('Got api load error: ', error);
