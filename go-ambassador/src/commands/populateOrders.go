@@ -8,7 +8,7 @@ import (
 	"github.com/go-faker/faker/v4"
 )
 
-func main4() {
+func main() {
 	database.Connect()
 
 	// delete all order items
@@ -32,6 +32,8 @@ func main4() {
 				AdminRevenue:      0.9 * float32(price[0]) / 10.0,
 				AmbassadorRevenue: 0.1 * float32(price[0]) / 10.0,
 			})
+
+			// database.DB.Create(&orderItems[j])
 		}
 
 		order := models.Order{
@@ -42,7 +44,7 @@ func main4() {
 			LastName:        faker.LastName(),
 			Email:           faker.Email(),
 			Complete:        true,
-			OrderItem:       orderItems,
+			OrderItems:      orderItems,
 		}
 
 		database.DB.Create(&order)

@@ -37,7 +37,7 @@ export const LinksPage = () => {
             <tr key={link.id}>
               <td>{link.id}</td>
               <td>{link.code}</td>
-              <td>{link.order.length}</td>
+              <td>{link.orders.length}</td>
               <td>{'a'}</td>
             </tr>
           ))}

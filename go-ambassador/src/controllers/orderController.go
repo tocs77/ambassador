@@ -14,12 +14,18 @@ import (
 
 func Orders(c *fiber.Ctx) error {
 	var orders []models.Order
-	database.DB.Preload("OrderItem").Find(&orders)
+	database.DB.Preload("OrderItems").Find(&orders)
 	for i, order := range orders {
 		orders[i].Name = order.FullName()
 		orders[i].Total = order.GetTotal()
 	}
 	return c.JSON(orders)
+}
+
+func OrderItems(c *fiber.Ctx) error {
+	var orderItems []models.OrderItem
+	database.DB.Find(&orderItems)
+	return c.JSON(orderItems)
 }
 
 type CreateOrderRequest struct {
@@ -166,7 +172,7 @@ func CompleteOrder(c *fiber.Ctx) error {
 	go func(order models.Order) {
 		var ambassadorRevenue float32
 		var adminRevenue float32
-		for _, orderItem := range order.OrderItem {
+		for _, orderItem := range order.OrderItems {
 			ambassadorRevenue += orderItem.AmbassadorRevenue
 			adminRevenue += orderItem.AdminRevenue
 		}

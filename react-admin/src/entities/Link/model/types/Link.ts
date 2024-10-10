@@ -1,5 +1,7 @@
+import { Order } from '@/entities/Order';
+
 export interface Link {
   id: number;
   code: string;
-  order: any[];
+  orders: Order[];
 }

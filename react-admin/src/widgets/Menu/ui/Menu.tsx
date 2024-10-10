@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom';
+import classes from './Menu.module.scss';
 
 export const Menu = () => {
   return (
@@ -16,7 +17,7 @@ export const Menu = () => {
         <div className='offcanvas-body d-md-flex flex-column p-0 pt-lg-3 overflow-y-auto'>
           <ul className='nav flex-column'>
             <li className='nav-item'>
-              <NavLink className='nav-link' aria-current='page' to='/users'>
+              <NavLink className={({ isActive }) => `nav-link ${isActive && classes.active}`} aria-current='page' to='/users'>
                 <svg className='bi'>
                   <use xlinkHref='#house-fill' />
                 </svg>
@@ -24,11 +25,19 @@ export const Menu = () => {
               </NavLink>
             </li>
             <li className='nav-item'>
-              <NavLink className='nav-link' aria-current='page' to='/products'>
+              <NavLink className={({ isActive }) => `nav-link ${isActive && classes.active}`} aria-current='page' to='/products'>
                 <svg className='bi'>
                   <use xlinkHref='#house-fill' />
                 </svg>
                 {'Products'}
+              </NavLink>
+            </li>
+            <li className='nav-item'>
+              <NavLink className={({ isActive }) => `nav-link ${isActive && classes.active}`} aria-current='page' to='/orders'>
+                <svg className='bi'>
+                  <use xlinkHref='#house-fill' />
+                </svg>
+                {'Orders'}
               </NavLink>
             </li>
           </ul>

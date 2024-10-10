@@ -2,6 +2,7 @@ import { User } from '@/shared/types';
 import { instance, Response, parseErrorMessage } from '../axios';
 import { Link } from '@/entities/Link';
 import { Product } from '@/entities/Product';
+import { Order } from '@/entities/Order';
 
 class AdminController {
   async user(): Response<User> {
@@ -87,6 +88,50 @@ class AdminController {
     let response;
     try {
       response = await instance.patch(`admin/products/${product.id}`, product);
+      return { payload: response.data, type: 'payload' };
+    } catch (error) {
+      console.log('Got api load error: ', error);
+      return { message: parseErrorMessage(error), type: 'error' };
+    }
+  }
+
+  async getOrders(): Response<Order[]> {
+    let response;
+    try {
+      response = await instance.get(`admin/orders`);
+      return { payload: response.data, type: 'payload' };
+    } catch (error) {
+      console.log('Got api load error: ', error);
+      return { message: parseErrorMessage(error), type: 'error' };
+    }
+  }
+
+  async getOrderItems(): Response<Order> {
+    let response;
+    try {
+      response = await instance.get('admin/orderitems');
+      return { payload: response.data, type: 'payload' };
+    } catch (error) {
+      console.log('Got api load error: ', error);
+      return { message: parseErrorMessage(error), type: 'error' };
+    }
+  }
+
+  async updateUser(user: Omit<User, 'id'>): Response<User> {
+    let response;
+    try {
+      response = await instance.patch('admin/user', user);
+      return { payload: response.data, type: 'payload' };
+    } catch (error) {
+      console.log('Got api load error: ', error);
+      return { message: parseErrorMessage(error), type: 'error' };
+    }
+  }
+
+  async updatePassword(password: string, password_confirm: string): Response<void> {
+    let response;
+    try {
+      response = await instance.patch('admin/user/password', { password, password_confirm });
       return { payload: response.data, type: 'payload' };
     } catch (error) {
       console.log('Got api load error: ', error);
