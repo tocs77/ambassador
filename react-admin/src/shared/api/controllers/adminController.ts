@@ -1,4 +1,4 @@
-import { User } from '@/shared/types';
+import { User } from '@/entities/User';
 import { instance, Response, parseErrorMessage } from '../axios';
 import { Link } from '@/entities/Link';
 import { Product } from '@/entities/Product';

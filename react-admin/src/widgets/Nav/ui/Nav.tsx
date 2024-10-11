@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { authController } from '@/shared/api';
-import { User } from '@/shared/types';
+import { User } from '@/entities/User';
 import { Link } from 'react-router-dom';
 
 interface NavProps {

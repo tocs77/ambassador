@@ -3,9 +3,12 @@ import { Button, TextField } from '@mui/material';
 import Alert from '@mui/material/Alert';
 
 import { Layout } from '@/shared/ui/Layout';
-import { adminController } from '@/shared/api';
+import { useGetUserAdmin, useUpdatePasswordAdmin, useUpdateUserAdmin } from '@/entities/User';
 
 export const ProfilePage = () => {
+  const { data: user, isLoading, error: loadError } = useGetUserAdmin();
+  const [updateUser, { error: updateUserError }] = useUpdateUserAdmin();
+  const [updatePassword, { error: updatePasswordError }] = useUpdatePasswordAdmin();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -13,46 +16,43 @@ export const ProfilePage = () => {
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [error, setError] = useState('');
 
-  const getUser = async () => {
-    const response = await adminController.user();
-    if (response.type === 'error') {
-      return;
-    }
-
-    setFirstName(response.payload.first_name);
-    setLastName(response.payload.last_name);
-    setEmail(response.payload.email);
-  };
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
-    getUser();
-  }, []);
+    if (!user) return;
+    setFirstName(user.first_name);
+    setLastName(user.last_name);
+    setEmail(user.email);
+  }, [user]);
 
-  const infoSubmit = async (e: React.FormEvent) => {
+  useEffect(() => {
+    if (loadError) {
+      setError(loadError as string);
+    }
+    if (updateUserError) {
+      setError(updateUserError as string);
+    }
+    if (updatePasswordError) {
+      setError(updatePasswordError as string);
+    }
+  }, [loadError, updateUserError, updatePasswordError]);
+
+  const infoSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const data = {
       first_name: firstName,
       last_name: lastName,
       email: email,
     };
-    const res = await adminController.updateUser(data);
-    if (res.type === 'error') {
-      setError(res.message);
-      return;
-    }
     setError('');
+    updateUser(data);
   };
 
   const passwordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const res = await adminController.updatePassword(password, passwordConfirm);
-    if (res.type === 'error') {
-      setError(res.message);
-      return;
-    }
     setError('');
+    updatePassword({ password, password_confirm: passwordConfirm });
   };
+
+  if (isLoading) return <div>Loading...</div>;
 
   return (
     <Layout>
