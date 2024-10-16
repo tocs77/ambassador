@@ -1,5 +1,5 @@
 import { adminController } from '@/shared/api';
-import { User } from '@/shared/types';
+import { User } from '@/entities/User';
 import { Layout } from '@/shared/ui/Layout';
 import Button from '@mui/material/Button';
 import { useEffect, useState } from 'react';

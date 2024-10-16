@@ -1,2 +1,3 @@
 export type { User } from './model/types/User';
-export { useGetUserAdmin, useUpdatePasswordAdmin, useUpdateUserAdmin } from './api/userApi';
+export type { Stats } from './model/types/Stats';
+export { useGetUser, useUpdatePassword, useUpdateUser, useGetStats, useGetRankings } from './api/userApi';

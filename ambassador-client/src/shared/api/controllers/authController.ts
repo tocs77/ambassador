@@ -19,7 +19,7 @@ class AuthController {
   async register({ email, password, confirmPassword, firstName, lastName }: RegisterArgs): Response<LoginResponse> {
     let response;
     try {
-      response = await instance.post('/admin/register', {
+      response = await instance.post('/ambassador/register', {
         email,
         password,
         password_confirm: confirmPassword,
@@ -38,7 +38,7 @@ class AuthController {
   async login(email: string, password: string): Response<LoginResponse> {
     let response;
     try {
-      response = await instance.post('/admin/login', {
+      response = await instance.post('/ambassador/login', {
         email,
         password,
       });
@@ -51,7 +51,7 @@ class AuthController {
   async logout(): Response<void> {
     let response;
     try {
-      response = await instance.post('/admin/logout');
+      response = await instance.post('/ambassador/logout');
       return { payload: response.data, type: 'payload' };
     } catch (error) {
       return { message: parseErrorMessage(error), type: 'error' };

@@ -1,14 +1,14 @@
-import { User } from '@/entities/User';
+import { Stats, User } from '@/entities/User';
 import { instance, Response, parseErrorMessage } from '../axios';
 import { Link } from '@/entities/Link';
 import { Product } from '@/entities/Product';
 import { Order } from '@/entities/Order';
 
-class AdminController {
+class AmbassadorController {
   async user(): Response<User> {
     let response;
     try {
-      response = await instance.get('/admin/user');
+      response = await instance.get('/ambassador/user');
 
       return { payload: response.data, type: 'payload' };
     } catch (error) {
@@ -20,7 +20,7 @@ class AdminController {
   async getAmbassdors(): Response<User[]> {
     let response;
     try {
-      response = await instance.get('/admin/ambassadors');
+      response = await instance.get('/ambassador/ambassadors');
 
       return { payload: response.data, type: 'payload' };
     } catch (error) {
@@ -32,7 +32,7 @@ class AdminController {
   async getLinks(id: string): Response<Link[]> {
     let response;
     try {
-      response = await instance.get(`admin/user/${id}/links`);
+      response = await instance.get(`ambassador/user/${id}/links`);
       return { payload: response.data, type: 'payload' };
     } catch (error) {
       console.log('Got api load error: ', error);
@@ -43,7 +43,7 @@ class AdminController {
   async getProducts(): Response<Product[]> {
     let response;
     try {
-      response = await instance.get(`admin/products`);
+      response = await instance.get(`ambassador/products`);
       return { payload: response.data, type: 'payload' };
     } catch (error) {
       console.log('Got api load error: ', error);
@@ -54,7 +54,7 @@ class AdminController {
   async getProduct(id: number): Response<Product> {
     let response;
     try {
-      response = await instance.get(`admin/products/${id}`);
+      response = await instance.get(`ambassador/products/${id}`);
       return { payload: response.data, type: 'payload' };
     } catch (error) {
       console.log('Got api load error: ', error);
@@ -65,7 +65,7 @@ class AdminController {
   async deleteProduct(id: number): Response<void> {
     let response;
     try {
-      response = await instance.delete(`admin/products/${id}`);
+      response = await instance.delete(`ambassador/products/${id}`);
       return { payload: response.data, type: 'payload' };
     } catch (error) {
       console.log('Got api load error: ', error);
@@ -76,7 +76,7 @@ class AdminController {
   async createProduct(product: Omit<Product, 'id'>): Response<Product> {
     let response;
     try {
-      response = await instance.post(`admin/products`, product);
+      response = await instance.post(`ambassador/products`, product);
       return { payload: response.data, type: 'payload' };
     } catch (error) {
       console.log('Got api load error: ', error);
@@ -87,7 +87,7 @@ class AdminController {
   async updateProduct(product: Product): Response<Product> {
     let response;
     try {
-      response = await instance.patch(`admin/products/${product.id}`, product);
+      response = await instance.patch(`ambassador/products/${product.id}`, product);
       return { payload: response.data, type: 'payload' };
     } catch (error) {
       console.log('Got api load error: ', error);
@@ -98,7 +98,7 @@ class AdminController {
   async getOrders(): Response<Order[]> {
     let response;
     try {
-      response = await instance.get(`admin/orders`);
+      response = await instance.get(`ambassador/orders`);
       return { payload: response.data, type: 'payload' };
     } catch (error) {
       console.log('Got api load error: ', error);
@@ -109,7 +109,7 @@ class AdminController {
   async getOrderItems(): Response<Order> {
     let response;
     try {
-      response = await instance.get('admin/orderitems');
+      response = await instance.get('ambassador/orderitems');
       return { payload: response.data, type: 'payload' };
     } catch (error) {
       console.log('Got api load error: ', error);
@@ -117,10 +117,10 @@ class AdminController {
     }
   }
 
-  async updateUser(user: Omit<User, 'id'>): Response<User> {
+  async updateUser(user: Omit<User, 'id' | 'revenue'>): Response<User> {
     let response;
     try {
-      response = await instance.patch('admin/user', user);
+      response = await instance.patch('ambassador/user', user);
       return { payload: response.data, type: 'payload' };
     } catch (error) {
       console.log('Got api load error: ', error);
@@ -131,7 +131,29 @@ class AdminController {
   async updatePassword(password: string, password_confirm: string): Response<void> {
     let response;
     try {
-      response = await instance.patch('admin/user/password', { password, password_confirm });
+      response = await instance.patch('ambassador/user/password', { password, password_confirm });
+      return { payload: response.data, type: 'payload' };
+    } catch (error) {
+      console.log('Got api load error: ', error);
+      return { message: parseErrorMessage(error), type: 'error' };
+    }
+  }
+
+  async getStats(): Response<Stats[]> {
+    let response;
+    try {
+      response = await instance.get('ambassador/stats');
+      return { payload: response.data, type: 'payload' };
+    } catch (error) {
+      console.log('Got api load error: ', error);
+      return { message: parseErrorMessage(error), type: 'error' };
+    }
+  }
+
+  async getRankings(): Response<Record<string, number>> {
+    let response;
+    try {
+      response = await instance.get('ambassador/rankings');
       return { payload: response.data, type: 'payload' };
     } catch (error) {
       console.log('Got api load error: ', error);
@@ -140,4 +162,4 @@ class AdminController {
   }
 }
 
-export const adminController = new AdminController();
+export const ambassadorController = new AmbassadorController();

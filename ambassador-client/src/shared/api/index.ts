@@ -1,3 +1,3 @@
 export { authController } from './controllers/authController';
-export { adminController } from './controllers/adminController';
+export { ambassadorController } from './controllers/ambassadorController';
 export { rtkApi } from './rtkApi/rtkApi';

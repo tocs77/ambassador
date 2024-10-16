@@ -8,7 +8,7 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-func main5() {
+func main() {
 
 	database.Connect()
 	database.SetupRedis()

@@ -1,8 +1,10 @@
 import { Layout } from '@/shared/ui/Layout';
+import { Header } from '@/widgets/Header';
 
 export const ProductsFrontendPage = () => {
   return (
     <Layout>
+      <Header />
       <div className='container'>
         <div className='row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3'>
           <div className='col'>
