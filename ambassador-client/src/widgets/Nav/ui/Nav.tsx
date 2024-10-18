@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 // import { authController } from '@/shared/api';
 // import { User } from '@/entities/User';
 import { useGetUser } from '@/entities/User';
@@ -21,14 +21,14 @@ export const Nav = () => {
         <div className='d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start'>
           <ul className='nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0'>
             <li>
-              <a href='#' className='nav-link px-2 text-secondary'>
+              <NavLink to='/products' className={({ isActive }) => `nav-link px-2 ${isActive ? 'text-white' : 'text-secondary'}`}>
                 Frontend
-              </a>
+              </NavLink>
             </li>
             <li>
-              <a href='#' className='nav-link px-2 text-white'>
+              <NavLink to='/backend' className={({ isActive }) => `nav-link px-2 ${isActive ? 'text-white' : 'text-secondary'}`}>
                 Backend
-              </a>
+              </NavLink>
             </li>
           </ul>
 

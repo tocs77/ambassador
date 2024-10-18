@@ -1,7 +1,7 @@
 import { Button } from '@mui/material';
 import classes from './ProductForm.module.scss';
 import { useEffect, useState } from 'react';
-import { adminController } from '@/shared/api';
+import { ambassadorController } from '@/shared/api';
 import { Product } from '../../model/types/Product';
 
 interface ProductFormProps {
@@ -39,12 +39,12 @@ export const ProductForm = (props: ProductFormProps) => {
   };
 
   const createProduct = async () => {
-    return await adminController.createProduct({ title, description, image, price });
+    return await ambassadorController.createProduct({ title, description, image, price });
   };
 
   const updateProduct = async () => {
     if (!product) return;
-    return await adminController.updateProduct({ ...product, title, description, image, price });
+    return await ambassadorController.updateProduct({ ...product, title, description, image, price });
   };
 
   return (

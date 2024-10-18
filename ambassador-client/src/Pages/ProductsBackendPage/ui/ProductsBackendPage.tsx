@@ -1,10 +1,10 @@
-import { useGetProductsFrontend } from '@/entities/Product';
+import { useGetProductsBackend } from '@/entities/Product';
 import { ProductsList } from '@/features/ProductsList';
 import { Layout } from '@/shared/ui/Layout';
 import { Header } from '@/widgets/Header';
 
-export const ProductsFrontendPage = () => {
-  const { data: products, isLoading } = useGetProductsFrontend();
+export const ProductsBackendPage = () => {
+  const { data: products, isLoading } = useGetProductsBackend();
   if (isLoading) {
     return <div>Loading...</div>;
   }
@@ -20,7 +20,7 @@ export const ProductsFrontendPage = () => {
     <Layout>
       <Header />
       <div className='container'>
-        <ProductsList products={products} />
+        <ProductsList products={products.data} />
       </div>
     </Layout>
   );

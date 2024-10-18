@@ -1,7 +1,7 @@
 import { Stats, User } from '@/entities/User';
 import { instance, Response, parseErrorMessage } from '../axios';
 import { Link } from '@/entities/Link';
-import { Product } from '@/entities/Product';
+import { Product, ProductsBackendResponse } from '@/entities/Product';
 import { Order } from '@/entities/Order';
 
 class AmbassadorController {
@@ -40,10 +40,21 @@ class AmbassadorController {
     }
   }
 
-  async getProducts(): Response<Product[]> {
+  async getProductsFrontend(): Response<Product[]> {
     let response;
     try {
-      response = await instance.get(`ambassador/products`);
+      response = await instance.get('ambassador/products/frontend');
+      return { payload: response.data, type: 'payload' };
+    } catch (error) {
+      console.log('Got api load error: ', error);
+      return { message: parseErrorMessage(error), type: 'error' };
+    }
+  }
+
+  async getProductsBackend(): Response<ProductsBackendResponse> {
+    let response;
+    try {
+      response = await instance.get('ambassador/products/backend');
       return { payload: response.data, type: 'payload' };
     } catch (error) {
       console.log('Got api load error: ', error);

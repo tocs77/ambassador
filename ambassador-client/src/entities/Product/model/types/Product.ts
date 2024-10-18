@@ -5,3 +5,10 @@ export interface Product {
   image: string;
   price: number;
 }
+
+export interface ProductsBackendResponse {
+  data: Product[];
+  total: number;
+  page: number;
+  last_page: number;
+}
