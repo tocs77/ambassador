@@ -1,8 +1,12 @@
 import { Stats, User } from '@/entities/User';
 import { instance, Response, parseErrorMessage } from '../axios';
 import { Link } from '@/entities/Link';
-import { Product, ProductsBackendResponse } from '@/entities/Product';
+import { Product, ProductFilters, ProductsBackendResponse } from '@/entities/Product';
 import { Order } from '@/entities/Order';
+
+interface ProductsBackendArgs extends Partial<ProductFilters> {
+  page: number;
+}
 
 class AmbassadorController {
   async user(): Response<User> {
@@ -51,10 +55,21 @@ class AmbassadorController {
     }
   }
 
-  async getProductsBackend(): Response<ProductsBackendResponse> {
+  async getProductsBackend(args?: ProductsBackendArgs): Response<ProductsBackendResponse> {
+    const a: ProductsBackendArgs = args || { page: 1 };
+    const { page = 1, s = '', sort = 'asc' } = a;
     let response;
     try {
-      response = await instance.get('ambassador/products/backend');
+      response = await instance.get('ambassador/products/backend', {
+        params: {
+          page,
+          s,
+          sort,
+        },
+      });
+      if (!response.data.data) {
+        response.data.data = [];
+      }
       return { payload: response.data, type: 'payload' };
     } catch (error) {
       console.log('Got api load error: ', error);

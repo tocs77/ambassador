@@ -7,6 +7,9 @@
 		{
 			"name": "react-admin",
 			"path": "react-admin"
+		},
+		{
+			"path": "ambassador-client"
 		}
 	],
 	"settings": {}
