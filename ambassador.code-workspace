@@ -10,6 +10,9 @@
 		},
 		{
 			"path": "ambassador-client"
+		},
+		{
+			"path": "next-checkout"
 		}
 	],
 	"settings": {}
