@@ -12,12 +12,16 @@ export const ProductsFrontendPage = () => {
     if (!products) {
       return [];
     }
-    return products.filter((product) => {
+    const filteredProducts = products.filter((product) => {
       return (
         product.title.toLowerCase().includes(filter.s.toLowerCase()) ||
         product.description.toLowerCase().includes(filter.s.toLowerCase())
       );
     });
+    if (!filter.sort) return filteredProducts;
+    if (filter.sort === 'asc') return filteredProducts.sort((a, b) => a.price - b.price);
+
+    return filteredProducts.sort((a, b) => b.price - a.price);
   }, [products, filter]);
 
   if (isLoading) {

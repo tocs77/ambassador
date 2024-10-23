@@ -186,6 +186,17 @@ class AmbassadorController {
       return { message: parseErrorMessage(error), type: 'error' };
     }
   }
+
+  async createLink(products: number[]): Response<Link> {
+    let response;
+    try {
+      response = await instance.post('ambassador/links', { products });
+      return { payload: response.data, type: 'payload' };
+    } catch (error) {
+      console.log('Got api load error: ', error);
+      return { message: parseErrorMessage(error), type: 'error' };
+    }
+  }
 }
 
 export const ambassadorController = new AmbassadorController();
